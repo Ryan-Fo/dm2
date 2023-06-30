@@ -277,7 +277,13 @@ export class LSFWrapper {
         let nextTask;
 
         if (!isDefined(taskID)) {
-          nextTask = await tasks.loadNextTask();
+          console.log("Starting next task & project API calls");
+          let nextTaskData = await tasks.loadNextTaskPart1();
+          console.log("Starting reload project");
+          await this.reloadProjectSettings();
+          console.log("Starting reload task");
+          nextTask = await tasks.loadNextTaskPart2(nextTaskData);
+          console.log("done reload");
         } else {
           nextTask = await tasks.loadTask(taskID);
         }
