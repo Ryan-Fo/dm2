@@ -156,7 +156,8 @@ export const create = (columns) => {
         return task;
       }),
 
-      loadNextTask: flow(function* ({ select = true } = {}) {
+      loadNextTaskPart1: flow(function* ({ select = true } = {}) {
+
         const taskData = yield self.root.invokeAction("next_task", {
           reload: false,
         });
@@ -166,11 +167,15 @@ export const create = (columns) => {
           return null;
         }
 
+        return taskData;
+      }),
+
+      loadNextTaskPart2: flow(function* (taskData, { select = true } = {}) {
+
         const labelStreamModeChanged = self.selected && (
           self.selected.assigned_task !== taskData.assigned_task
           && taskData.assigned_task === false
         );
-
         const task = self.applyTaskSnapshot(taskData);
 
         if (select !== false) self.setSelected(task);
@@ -181,6 +186,7 @@ export const create = (columns) => {
 
         return task;
       }),
+
 
       applyTaskSnapshot(taskData, taskID) {
         let task;

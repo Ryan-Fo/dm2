@@ -179,9 +179,29 @@ export class LSFWrapper {
       onPrevTask: this.onPrevTask,
       panels: this.datamanager.panels,
     };
+    this.lsfProperties = lsfProperties;
 
     this.initLabelStudio(lsfProperties);
   }
+
+
+  async reloadProjectSettings()
+  {
+    if (this.confirmFetchProject !== true) {
+    console.log('Denied Project Fetch '+ JSON.stringify(this.confirmFetchProject));
+    }
+    else
+    {
+
+      this.lsfInstance.options.config = this.lsfConfigValue
+
+      const configPassed = this.lsfConfigValue
+
+      // Need to send lsfInstance.option.config to AppStore on Frontend code.
+      this.confirmFetchProject = false;
+    }
+  }
+
 
   /** @private */
   async initLabelStudio(settings) {
@@ -305,6 +325,15 @@ export class LSFWrapper {
     this.loadUserLabels();
 
     this.setLSFTask(task, annotationID, fromHistory);
+  }
+
+   setLSFProjectXML(project_xml) {
+     console.log("DM2: Calling assign config " + JSON.stringify(project_xml));
+     this.lsf.assignConfig(project_xml);
+  }
+
+  setLSFfetchedProject(projectCheck){
+    this.confirmFetchProject = projectCheck
   }
 
   setLSFTask(task, annotationID, fromHistory) {

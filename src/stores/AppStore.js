@@ -421,12 +421,12 @@ export const AppStore = types
     fetchProject: flow(function* (options = {}) {
       self.projectFetch = options.force === true;
 
-      const isTimer = options.interaction === "timer";
+      const isRefresh = options.interaction === "refresh";
       const params =
         options && options.interaction
           ? {
             interaction: options.interaction,
-            ...(isTimer ? ({
+            ...(isRefresh ? ({
               include: [
                 "task_count",
                 "task_number",
@@ -440,18 +440,23 @@ export const AppStore = types
       try {
         const newProject = yield self.apiCall("project", params);
         const projectLength = Object.entries(self.project ?? {}).length;
+        //
+        // self.needsDataFetch = (options.force !== true && projectLength > 0) ? (
+        //   self.project.task_count !== newProject.task_count ||
+        //   self.project.task_number !== newProject.task_number ||
+        //   self.project.annotation_count !== newProject.annotation_count ||
+        //   self.project.num_tasks_with_annotations !== newProject.num_tasks_with_annotations
+        // ) : false;
+        self.needsDataFetch = true;
 
-        self.needsDataFetch = (options.force !== true && projectLength > 0) ? (
-          self.project.task_count !== newProject.task_count ||
-          self.project.task_number !== newProject.task_number ||
-          self.project.annotation_count !== newProject.annotation_count ||
-          self.project.num_tasks_with_annotations !== newProject.num_tasks_with_annotations
-        ) : false;
-
-        if (options.interaction === "timer") {
+        if (options.interaction === "refresh") {
           self.project = Object.assign(self.project ?? {}, newProject);
         } else if (JSON.stringify(newProject ?? {}) !== JSON.stringify(self.project ?? {})) {
           self.project = newProject;
+          self.LSF?.setLSFProjectXML(self.project.label_config);
+          self.LSF?.setLSFfetchedProject(true);
+
+
         }
       } catch {
         self.crash();
@@ -570,6 +575,10 @@ export const AppStore = types
     }),
 
     invokeAction: flow(function* (actionId, options = {}) {
+
+      // Fetches project here
+      self.fetchProject()
+
       const view = self.currentView ?? {};
 
       const needsLock =
