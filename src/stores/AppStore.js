@@ -142,7 +142,7 @@ export const AppStore = types
       if (self.SDK.polling === false) return;
 
       const poll = async (self) => {
-        if (networkActivity.active) await self.fetchProject({ interaction: "timer" });
+        if (networkActivity.active) await self.fetchProject({ interaction: "refresh" });
         self._poll = setTimeout(() => poll(self), PROJECTS_FETCH_PERIOD);
       };
 
