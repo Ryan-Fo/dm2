@@ -19,7 +19,7 @@
   "scripts": {
     "build:bundle": "yarn run build:final",
     "build:notsourcemap": "GENERATE_SOURCEMAP=false yarn run build",
-    "build:final": "BUILD_NO_CHUNKS=true yarn run build",
+    "build:final": "yarn run build",
     "build:no-hash": "BUILD_NO_HASH=true BUILD_NO_CHUNKS=true yarn run build",
     "build:module": "NODE_ENV=production BUILD_NO_HASH=true BUILD_NO_CHUNKS=true BUILD_MODULE=true yarn run build",
     "build:module-dev": "BUILD_NO_MINIMIZATION=true BUILD_NO_HASH=true BUILD_NO_CHUNKS=true BUILD_MODULE=true yarn run build",

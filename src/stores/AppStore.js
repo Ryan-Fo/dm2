@@ -438,7 +438,7 @@ export const AppStore = types
           : null;
 
       try {
-        const newProject = yield self.apiCall("project", params);
+        const newProject = yield self.apiCall("project", params); //Returning wrong thing
         const projectLength = Object.entries(self.project ?? {}).length;
         //
         // self.needsDataFetch = (options.force !== true && projectLength > 0) ? (
@@ -467,6 +467,8 @@ export const AppStore = types
     }),
 
     fetchActions: flow(function* () {
+      // added 7/3
+      self.LSF?.setLSFProjectXML(self.project.label_config);
       const serverActions = yield self.apiCall("actions");
 
       self.addActions(...(serverActions ?? []));
@@ -575,6 +577,7 @@ export const AppStore = types
     }),
 
     invokeAction: flow(function* (actionId, options = {}) {
+
 
       // Fetches project here
       self.fetchProject()
