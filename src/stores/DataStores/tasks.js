@@ -162,20 +162,51 @@ export const create = (columns) => {
           reload: false,
         });
 
-        if (taskData?.$meta?.status === 404) {
-          getRoot(self).SDK.invoke("labelStreamFinished");
-          return null;
-        }
+        // if (taskData?.$meta?.status === 404) {
+        //   getRoot(self).SDK.invoke("labelStreamFinished");
+        //   return null;
+        // }
 
         return taskData;
       }),
 
       loadNextTaskPart2: flow(function* (taskData, { select = true } = {}) {
+        if (taskData?.$meta?.status === 404) {
+          // creates the green check at end of annotations
+          // annotation data is stored even though the project does not reflect this.
+          getRoot(self).SDK.invoke("labelStreamFinished")
+          return null;
+          }
+        const labelStreamModeChanged = self.selected && (
+          self.selected.assigned_task !== taskData.assigned_task
+          && taskData.assigned_task === false
+        );
+        const task = self.applyTaskSnapshot(taskData);
+
+        if (select !== false) self.setSelected(task);
+
+        if (labelStreamModeChanged) {
+          getRoot(self).SDK.invoke("assignedStreamFinished");
+        }
+
+        return task;
+      }),
+
+      loadNextTask: flow(function* ({ select = true } = {}) {
+        const taskData = yield self.root.invokeAction("next_task", {
+          reload: false,
+        });
+
+        if (taskData?.$meta?.status === 404) {
+          getRoot(self).SDK.invoke("labelStreamFinished");
+          return null;
+        }
 
         const labelStreamModeChanged = self.selected && (
           self.selected.assigned_task !== taskData.assigned_task
           && taskData.assigned_task === false
         );
+
         const task = self.applyTaskSnapshot(taskData);
 
         if (select !== false) self.setSelected(task);

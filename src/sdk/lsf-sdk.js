@@ -192,16 +192,6 @@ export class LSFWrapper {
     else
     {
       console.log('Confirmed Project Fetch '+ JSON.stringify(this.confirmFetchProject));
-      // const hardcodedxml = ('<View> \n' +
-      // '\t <Image name="image" value="$image" zoom="true"/> \n' +
-      // '\t <BrushLabels name="tag" toName="image"> \n' +
-      // '\t \t <Label value="alien_tree_plantations" background= "rgba(255, 0, 0, 1.0)"/> \n' +
-      // '\t \t <Label value="bare" background= "rgba(126, 255, 0, 1.0)"/> \n' +
-      // '\t \t <Label value="grasslands" background= "rgba(0, 246, 255, 1.0)"/> \n' +
-      // '\t \t <Label value="invaded_mesic_wet_forest" background= "rgba(137, 0, 255, 1.0)"/> \n'+
-      // '\t </BrushLabels>\n'+
-      // '</View>');
-      //this.lsfInstance.options.config = hardcodedxml
 
       this.lsfInstance.options.config = this.lsfConfigValue
 
@@ -287,13 +277,21 @@ export class LSFWrapper {
         let nextTask;
 
         if (!isDefined(taskID)) {
-          console.log("Starting next task & project API calls");
-          let nextTaskData = await tasks.loadNextTaskPart1(); /// calls invokeAction("next_task") which calls fetchProject
           console.log("Starting reload project");
           await this.reloadProjectSettings();
+          console.log("Starting next task & project API calls");
+          let nextTaskData = await tasks.loadNextTaskPart1(); /// calls invokeAction("next_task") which calls fetchProject
           console.log("Starting reload task");
+
+          // THIS IS WHERE THE NULL OCCURS
           nextTask = await tasks.loadNextTaskPart2(nextTaskData);
           console.log("done reload");
+
+
+          // await this.reloadProjectSettings()
+          // nextTask = await tasks.loadTask(taskID)
+
+
         } else {
           nextTask = await tasks.loadTask(taskID);
         }
