@@ -854,9 +854,11 @@ export class LSFWrapper {
   prepareData(annotation, { includeId, draft } = {}) {
     const userGenerate =
       !annotation.userGenerate || annotation.sentUserGenerate;
-
+    console.log('loaded data ' + annotation.loadedDate);
+    console.log('lead time ' + annotation.leadTime);
     const result = {
       // task execution time, always summed up with previous values
+
       lead_time: (new Date() - annotation.loadedDate) / 1000 + Number(annotation.leadTime ?? 0),
       // don't serialize annotations twice for drafts
       result: (draft ? annotation.versions.draft : annotation.serializeAnnotation()) ?? [],
